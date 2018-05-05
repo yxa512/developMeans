@@ -1,0 +1,19 @@
+查看分支
+git branch -a
+
+下载分支
+git checkout -b branch_name origin/branch_name
+
+切换分支
+git checkout branch_name
+
+设置邮箱、用户名
+git config --global user.name "yangxa"
+git config --global user.email "624511760@qq.com"
+git config --list
+
+克隆仓库
+git clone url
+
+推送远程分支
+git branch --set-upstream develop_v1.3.3 origin/develop_v1.3.3
