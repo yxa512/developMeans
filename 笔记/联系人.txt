@@ -1,0 +1,44 @@
+ Intent intent = new Intent(Intent.ACTION_PICK);
+                intent.setType(ContactsContract.Contacts.CONTENT_TYPE);
+                startActivityForResult(intent, 1);
+ 
+
+@Override
+    public void onActivityResult(int reqCode, int resultCode, Intent data) {
+        super.onActivityResult(reqCode, resultCode, data);
+        switch (reqCode) {
+            case (PICK_CONTACT):
+                if (resultCode == Activity.RESULT_OK) {
+                    Uri contactData = data.getData();
+                    Cursor cursor = managedQuery(contactData, null, null, null, null);
+                    if (cursor.moveToFirst()) {
+                        int contactIdIndex = cursor.getColumnIndex(ContactsContract.Contacts._ID);
+                        //String name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+                        String hasPhone = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER));
+                        //Log.i("yxa", "contactIdIndex = "+contactIdIndex+" name = "+name);
+                        if (hasPhone.equalsIgnoreCase("1")) {
+                            String contactId = cursor.getString(contactIdIndex);
+                            Cursor phones = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = " + contactId, null, null);
+                            while (phones.moveToNext()) {
+                                String phoneNumber = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)).replace(" ", "");
+                                String PHONE_R = "^(1[0-9])\\d{9}$";
+                                Pattern p = Pattern.compile(PHONE_R);
+                                if(null != p && null != phoneNumber){
+                                    if (p.matcher(phoneNumber).matches()) {
+                                        etNumber.setText(phoneNumber);
+                                    } else {
+                                        ToastUtil.showShort(AddResidentsActivity.this, "手机账号不规范");
+                                    }
+                                }
+                                //Log.i("yxa", "phoneNumber = "+phoneNumber);
+                                break;
+                            }
+                            phones.close();
+                        }
+                    }
+                }
+                break;
+            default:
+                break;
+        }
+    }

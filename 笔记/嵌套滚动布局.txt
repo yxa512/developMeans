@@ -1,0 +1,30 @@
+/**
+ * 防止被嵌套在其他滚动布局中，不显示完全
+ * @Description: TODO
+ *
+ * @author yxa512
+ * @date 2015-8-6 下午5:20:20
+ */
+public class MyGridViewInListView extends GridView {
+
+	public MyGridViewInListView(Context context, AttributeSet attrs) {
+		super(context, attrs);
+		}
+
+
+		public MyGridViewInListView(Context context) {
+		super(context);
+		}
+
+
+		public MyGridViewInListView(Context context, AttributeSet attrs, int defStyle) {
+		super(context, attrs, defStyle);
+		}
+
+	@Override
+	public void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+
+		int expandSpec = MeasureSpec.makeMeasureSpec(Integer.MAX_VALUE >> 2,
+		MeasureSpec.AT_MOST);
+		super.onMeasure(widthMeasureSpec, expandSpec);
+	}

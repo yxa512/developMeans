@@ -1,0 +1,5 @@
+manifest里的启动页的launchMode去掉   这个是前提，是必须的，但是android有一个小的问题，我不知道楼主试过没有，当你去掉启动模式，直接运行程序，再点击Home键，是不会重新启动程序的，但是你讲程序打包apk之后，安装到手机，这时问题来了，当安装成功之后，会提示你是完成还是打开，这时候，你点击完成，程序运行，你点Home键，也是没有问题的，但是你点击打开，程序运行，你再点击Home键，这时不管怎点，都会重新启动程序，你需要，在你的启动界面添加这么一行：
+if ((getIntent().getFlags() & Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT) != 0) {  
+                        finish();
+                        return;
+                 }

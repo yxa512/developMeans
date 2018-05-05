@@ -1,0 +1,37 @@
+﻿// 通过WindowManager获取  
+
+DisplayMetrics dm = new DisplayMetrics();  
+
+getWindowManager().getDefaultDisplay().getMetrics(dm);  
+
+System.out.println("heigth : " + dm.heightPixels);  
+
+System.out.println("width : " + dm.widthPixels);  
+
+// 通过Resources获取          
+
+DisplayMetrics dm2 = getResources().getDisplayMetrics();  
+
+System.out.println("heigth2 : " + dm2.heightPixels);  
+
+System.out.println("width2 : " + dm2.widthPixels);    
+
+// 获取屏幕的默认分辨率  
+
+Display display = getWindowManager().getDefaultDisplay();  
+
+System.out.println("width-display :" + display.getWidth());  
+
+System.out.println("heigth-display :" + display.getHeight());
+
+
+
+ldpi：240x320 
+
+mdpi：320x480 
+
+hdpi：480x800、480x854 
+
+xhdpi：至少960*720 
+
+xxhdpi：1280×720

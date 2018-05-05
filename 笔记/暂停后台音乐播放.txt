@@ -1,0 +1,24 @@
+AudioManager audioManager = (AudioManager)this.getSystemService(Context.AUDIO_SERVICE);
+int result = audioManager.requestAudioFocus(null,AudioManager.STREAM_MUSIC,AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);//暂停后台媒体播放
+int result = am.abandonAudioFocus(null);//恢复
+
+//停止系统闹钟
+private void stopAlarm() {
+    Intent intent = new Intent();
+    intent.setAction("com.android.deskclock.ALARM_DISMISS");
+    sendBroadcast(intent);
+}
+ 
+//暂停系统闹钟   
+private void snoozeAlarm() {
+    Intent intent = new Intent();
+    intent.setAction("com.android.deskclock.ALARM_SNOOZE");
+    sendBroadcast(intent);
+}
+
+IntentFilter filter = new IntentFilter();
+filter.addAction("com.android.deskclock.ALARM_ALERT");//闹钟响起
+filter.addAction("com.android.deskclock.ALARM_DONE");//闹钟暂停或关闭
+registerReceiver(mReceiver, filter);
+
+http://www.bkjia.com/Androidjc/903822.html#userconsent#

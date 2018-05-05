@@ -1,0 +1,9 @@
+命令为：keytool -list -v -keystore
+
+keytool 所在文件目录：D:\Program Files (x86)\Java\jdk1.8.0_144\bin
+
+C:\Users\Administrator\.android 自带key签名
+
+debug.keystore：命令为：keytool -list -v -keystore debug.keystore
+
+自定义的 keystore：命令为：keytool -list -v -keystore apk的keystore

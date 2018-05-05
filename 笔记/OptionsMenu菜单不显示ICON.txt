@@ -1,0 +1,51 @@
+在Android4.0系统中，创建菜单Menu，通过setIcon方法给菜单添加图标是无效的，图标没有显出来，2.3系统中是可以显示出来的。这个问题的根本原因在于4.0系统中，涉及到菜单的源码类 MenuBuilder做了改变，该类的部分源码如下：
+public class MenuBuilder implements Menu {
+...
+private boolean mOptionalIconsVisible = false;
+....
+    void setOptionalIconsVisible(boolean visible) {
+        mOptionalIconsVisible = visible;
+    }
+
+    boolean getOptionalIconsVisible() {
+        return mOptionalIconsVisible;
+    }
+...
+}
+
+上面的代码中，mOptionalIconsVisible成员初始值默认为false，这就是为什么给菜单设置图标没有效果的原因；所以，只要我们在创建菜单时通过调用setOptionalIconsVisible方法设置mOptionalIconsVisible为true就可以了；这时候问题来了，要想调用该方法，就需要创建MenuBuilder对象，但是，我们是无法在开发的应用程序中创建MenuBuilder这个对象的（MenuBuilder为系统内部的框架类）；
+
+   这时候就需要考虑用反射了，在代码运行创建菜单的时候通过反射调用setOptionalIconsVisible方法设置mOptionalIconsVisible为true，然后在给菜单添加Icon，这样就可以在菜单中显示添加的图标了；
+@Override
+public boolean onCreateOptionsMenu(Menu menu)
+{
+setIconEnable(menu, true);   //调用这句实现显示ICON
+
+menu.add("新增记事").setIcon(R.drawable.add);
+menu.add("记事列表").setIcon(R.drawable.list);
+menu.add("分类管理").setIcon(R.drawable.category);
+menu.add("官方网站").setIcon(R.drawable.web);
+menu.add("关于").setIcon(R.drawable.about);
+menu.add("退出").setIcon(R.drawable.exit);
+
+return super.onCreateOptionsMenu(menu);
+}
+
+
+//enable为true时，菜单添加图标有效，enable为false时无效。4.0系统默认无效
+    private void setIconEnable(Menu menu, boolean enable)
+    {
+    try 
+    {
+Class<?> clazz = Class.forName("com.android.internal.view.menu.MenuBuilder");
+Method m = clazz.getDeclaredMethod("setOptionalIconsVisible", boolean.class);
+m.setAccessible(true);
+
+//MenuBuilder实现Menu接口，创建菜单时，传进来的menu其实就是MenuBuilder对象(java的多态特征)
+m.invoke(menu, enable);
+    
+} catch (Exception e) 
+{
+e.printStackTrace();
+}
+    }

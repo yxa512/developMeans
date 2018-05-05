@@ -1,0 +1,6 @@
+  <activity
+            android:name="com.comhome.security.AddSensorActivity"
+            android:windowSoftInputMode="adjustPan"
+            android:label="AddSensorActivity"
+            android:screenOrientation="portrait" >
+        </activity>

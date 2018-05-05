@@ -1,0 +1,10 @@
+android:onClick="functionKey" 在布局中指定点击方法
+
+textview默认不可点击，所以达到不了state_pressed的状态。解决办法是要么在xml文件中对textview添加clickable:true属性
+
+android:windowSoftInputMode="adjustPan"
+android:screenOrientation="portrait" 
+
+Uri alert = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);//系统默认铃声
+Settings.System.DEFAULT_RINGTONE_URI 同上
+Uri alert = RingtoneManager.getActualDefaultRingtoneUri(this,RingtoneManager.TYPE_RINGTONE);//来电铃声

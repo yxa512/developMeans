@@ -1,0 +1,217 @@
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.UUID;
+
+import android.app.Activity;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
+import android.graphics.BitmapFactory;
+import android.media.ExifInterface;
+import android.net.Uri;
+import android.provider.MediaStore;
+import android.util.Base64;
+import android.util.Log;
+import android.widget.Toast;
+
+/**
+ * @author wzl 2013-11-21 下午5:37:14
+ */
+public abstract class CameraUtil {
+
+	private final static String TAG = "CameraUtil";
+	/**
+	 * 存放预览图片的路??
+	 */
+	public static final String PREVIEW_IMG_PATH = android.os.Environment
+			.getExternalStorageDirectory() + File.separator + "canal_img";
+	public static String photoName;// 照片名称
+	public static String mPhotoPath = android.os.Environment
+			.getExternalStorageDirectory()// 照片路径
+			+ File.separator + "DCIM" + File.separator + "Camera";
+	private static String photoFilePath;// 照片文件路径
+
+	public static String setPhotoFilePath(String photoName) {
+		photoFilePath = mPhotoPath + File.separator + photoName;
+		return photoFilePath;
+	}
+
+	public static String getPhotoFilePath() {
+		return photoFilePath;
+	}
+
+	/**
+	 * 选择本地照片
+	 * 
+	 * @param activity
+	 * @param flag
+	 */
+	public static void selectLocationPhoto(Activity activity, int flag) {
+		boolean isExist = isExistSDcard();
+
+		if (isExist) {
+			Intent intent = new Intent();
+			intent.setType("image/*");
+			intent.setAction(Intent.ACTION_GET_CONTENT);
+			activity.startActivityForResult(intent, flag);
+		} else {
+			Toast.makeText(activity, "sd卡不存在!", Toast.LENGTH_LONG).show();
+		}
+	}
+
+	/**
+	 * 现场拍照
+	 * 
+	 * @param activity
+	 * @param flag
+	 */
+	public static void takePhoto(Activity activity, int flag) {
+		boolean isExist = isExistSDcard();
+		if (isExist) {
+			Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+			photoName = getPhotoName();
+			Log.e(TAG, "photoName == " + photoName);
+			File file = new File(mPhotoPath);
+			if (!file.exists()) {
+				file.mkdirs();
+			} else {
+				Log.v(TAG, "照片已存在");
+			}
+			setPhotoFilePath(photoName);
+			File photoFile = new File(mPhotoPath, photoName);
+			intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
+			activity.startActivityForResult(intent, flag);
+		} else {
+			Toast.makeText(activity, "sd卡不存在!", Toast.LENGTH_LONG).show();
+		}
+
+	}
+
+	// 设置照片名称格式
+	private static String getPhotoName() {
+		String token = UUID.randomUUID().toString().replaceAll("-", "");
+		return token + ".jpg";
+	}
+
+	/**
+	 * 判断sd是否存在
+	 * 
+	 * @return
+	 */
+	private static boolean isExistSDcard() {
+		Log.e(TAG,
+				"getExternalStorageDirectory == "
+						+ android.os.Environment.getExternalStorageDirectory());
+		Log.e(TAG,
+				"getExternalStorageState == "
+						+ android.os.Environment.getExternalStorageState());
+		if (android.os.Environment.getExternalStorageState().equals(
+				android.os.Environment.MEDIA_MOUNTED)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	// 计算图片的缩放值
+	public static int calculateInSampleSize(BitmapFactory.Options options,
+			int reqWidth, int reqHeight) {
+		final int height = options.outHeight;
+		final int width = options.outWidth;
+		int inSampleSize = 1;
+		if (height > reqHeight || width > reqWidth) {
+			final int heightRatio = Math.round((float) height/ (float) reqHeight);
+			final int widthRatio = Math.round((float) width / (float) reqWidth);
+			inSampleSize = heightRatio < widthRatio ? heightRatio : widthRatio;
+		}
+		Log.e("图片信息", "inSampleSize="+inSampleSize);
+		return inSampleSize*3;
+	}
+
+	// 根据路径获得图片并压缩，返回bitmap用于显示
+	public static Bitmap getSmallBitmap(String filePath) {
+		File aa=new File(filePath);
+		final BitmapFactory.Options options = new BitmapFactory.Options();
+		options.inJustDecodeBounds = true;
+		BitmapFactory.decodeFile(filePath, options);
+		// Calculate inSampleSize
+		options.inSampleSize = calculateInSampleSize(options, 480, 800);
+		options.inSampleSize = 10;
+		// Decode bitmap with inSampleSize set
+		options.inJustDecodeBounds = false;
+
+		return BitmapFactory.decodeFile(filePath, options);
+	}
+
+	// 把bitmap转换成String
+	public static String bitmapToString(String filePath) {
+		Bitmap bm = getSmallBitmap(filePath);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		bm.compress(Bitmap.CompressFormat.PNG, 40, baos);
+		byte[] b = baos.toByteArray();
+		File aa = new File(filePath);
+		String encodeToString = Base64.encodeToString(b, Base64.DEFAULT);
+		String newPath = aa.getParent() + "/small" + aa.getName();
+		try {
+			decoderBase64File(encodeToString, newPath);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return newPath;
+	}
+
+	/**
+	 * decoderBase64File:(将base64字符解码保存文件). <br/>
+	 * 
+	 * @author guhaizhou@126.com
+	 * @param base64Code
+	 *            编码后的字串
+	 * @param savePath
+	 *            文件保存路径
+	 * @throws Exception
+	 * @since JDK 1.6
+	 */
+	public static void decoderBase64File(String base64Code, String savePath)throws Exception {
+		byte[] buffer = Base64.decode(base64Code, Base64.DEFAULT);
+		FileOutputStream out = new FileOutputStream(savePath);
+		out.write(buffer);
+		out.close();
+	}
+	
+	/**
+	 * 获取图片旋转角度
+	 * @param filepath
+	 * @return
+	 */
+	public static int getExifOrientation(String filepath) {  
+	    int degree = 0;  
+	    ExifInterface exif = null;  
+	    try {  
+	        exif = new ExifInterface(filepath);  
+	    } catch (IOException ex) {  
+	        Log.d(TAG, "cannot read exif" + ex);  
+	    }  
+	    if (exif != null) {  
+	    int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, -1);  
+	        if (orientation != -1) {  
+	            switch(orientation) {  
+	                case ExifInterface.ORIENTATION_ROTATE_90:  
+	                    degree = 90;  
+	                    break;  
+	                case ExifInterface.ORIENTATION_ROTATE_180:  
+	                    degree = 180;  
+	                    break;  
+	                case ExifInterface.ORIENTATION_ROTATE_270:  
+	                    degree = 270;  
+	                    break;  
+	            }  
+	        }  
+	    }  
+	    Log.e("11111111111", "旋转角度 degree："+degree);
+	    return degree;  
+	}  
+}

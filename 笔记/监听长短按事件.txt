@@ -1,0 +1,35 @@
+ private boolean isLongPressKey;//是否长按
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_F8) {
+            if (event.getRepeatCount() == 0) {//识别长按短按的代码
+                event.startTracking();
+                isLongPressKey = false;
+            }else{
+                isLongPressKey = true;
+            }
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_F8) {
+            if(!isLongPressKey){
+                startActivity(getPackageManager().getLaunchIntentForPackage("com.android.deskclock"));
+            }
+            return true;
+        }
+        return super.onKeyUp(keyCode, event);
+    }
+
+    @Override
+    public boolean onKeyLongPress(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_F8) {
+            startActivity(new Intent(Settings.ACTION_SOUND_SETTINGS));
+            return true;
+        }
+        return super.onKeyLongPress(keyCode, event);
+    }

@@ -1,0 +1,143 @@
+Animations
+
+一、Animations介绍
+Animations是一个实现android UI界面动画效果的API，Animations提供了一系列的动画效果，可以进行旋转、缩放、淡入淡出等，这些效果可以应用在绝大多数的控件中。 
+
+二、Animations的分类
+Animations从总体上可以分为两大类：
+1.Tweened Animations：该类Animations提供了旋转、移动、伸展和淡出等效果。Alpha——淡入淡出，Scale——缩放效果，Rotate——旋转，Translate——移动效果。
+2.Frame-by-frame Animations：这一类Animations可以创建一个Drawable序列，这些Drawable可以按照指定的时间间歇一个一个的显示。
+ 
+三、Animations的使用方法（代码中使用）
+Animations extends Object implements Cloneable 
+使用TweenedAnimations的步骤：
+1.创建一个AnimationSet对象（Animation子类）；
+2.增加需要创建相应的Animation对象；
+3.更加项目的需求，为Animation对象设置相应的数据；
+4.将Animatin对象添加到AnimationSet对象当中；
+5.使用控件对象开始执行AnimationSet。
+
+　　Tweened Animations的分类
+　　１、Alpha：淡入淡出效果
+　　２、Scale：缩放效果
+　　３、Rotate：旋转效果
+　　４、Translate：移动效果
+ 
+Animation的四个子类：
+　　AlphaAnimation、TranslateAnimation、ScaleAnimation、RotateAnimation
+
+四、Tweened Animations具体实现
+【AlphaAnimation】
+//创建一个AnimationSet对象，参数为Boolean型，
+//true表示使用Animation的interpolator，false则是使用自己的
+AnimationSet animationSet = new AnimationSet(true);
+//创建一个AlphaAnimation对象，参数从完全的透明度，到完全的不透明
+AlphaAnimation alphaAnimation = new AlphaAnimation(1, 0);
+//设置动画执行的时间
+alphaAnimation.setDuration(500);
+//将alphaAnimation对象添加到AnimationSet当中
+animationSet.addAnimation(alphaAnimation);
+//使用ImageView的startAnimation方法执行动画
+image.startAnimation(animationSet);
+
+【TranslateAnimation】
+AnimationSet animationSet = new AnimationSet(true);
+//参数1～2：x轴的开始位置
+//参数3～4：y轴的开始位置
+//参数5～6：x轴的结束位置
+//参数7～8：x轴的结束位置
+TranslateAnimation translateAnimation =
+      new TranslateAnimation(
+           Animation.RELATIVE_TO_SELF,0f,
+           Animation.RELATIVE_TO_SELF,0.5f,
+           Animation.RELATIVE_TO_SELF,0f,
+           Animation.RELATIVE_TO_SELF,0.5f);
+translateAnimation.setDuration(1000);
+animationSet.addAnimation(translateAnimation);
+image.startAnimation(animationSet);
+
+【ScaleAnimation】
+//参数1：x轴的初始值
+//参数2：x轴收缩后的值
+//参数3：y轴的初始值
+//参数4：y轴收缩后的值
+//参数5：确定x轴坐标的类型
+//参数6：x轴的值，0.5f表明是以自身这个控件的一半长度为x轴
+//参数7：确定y轴坐标的类型
+//参数8：y轴的值，0.5f表明是以自身这个控件的一半长度为x轴
+ScaleAnimation scaleAnimation = new ScaleAnimation(
+      0, 0.1f,0,0.1f,
+      Animation.RELATIVE_TO_SELF,0.5f,
+      Animation.RELATIVE_TO_SELF,0.5f);
+scaleAnimation.setDuration(1000);
+animationSet.addAnimation(scaleAnimation);
+image.startAnimation(animationSet);
+
+【RotateAnimation】
+//参数1：从哪个旋转角度开始
+//参数2：转到什么角度
+//后4个参数用于设置围绕着旋转的圆的圆心在哪里
+//参数3：确定x轴坐标的类型，有ABSOLUT绝对坐标、RELATIVE_TO_SELF相对于自身坐标、RELATIVE_TO_PARENT相对于父控件的坐标
+//参数4：x轴的值，0.5f表明是以自身这个控件的一半长度为x轴
+//参数5：确定y轴坐标的类型
+//参数6：y轴的值，0.5f表明是以自身这个控件的一半长度为x轴
+RotateAnimation rotateAnimation = new RotateAnimation(0,360,Animation.RELATIVE_TO_SELF,0.5f,Animation.RELATIVE_TO_SELF,0.5f);
+rotateAnimation.setDuration(1000);
+animationSet.addAnimation(rotateAnimation);
+image.startAnimation(animationSet);
+
+【Tween Animations的通用方法】
+　　１、setDuration(long durationMills)
+　　设置动画持续时间（单位：毫秒）
+　　２、setFillAfter(Boolean fillAfter)
+　　如果fillAfter的值为true,则动画执行后，控件将停留在执行结束的状态
+　　３、setFillBefore(Boolean fillBefore)
+　　如果fillBefore的值为true，则动画执行后，控件将回到动画执行之前的状态
+　　４、setStartOffSet(long startOffSet)
+　　设置动画执行之前的等待时间
+　　５、setRepeatCount(int repeatCount)
+　　设置动画重复执行的次数
+
+【AnimationSet的具体使用方法】
+   1.AnimationSet是Animation的子类；
+   2.一个AnimationSet包含了一系列的Animation； 
+   3.针对AnimationSet设置一些Animation的常见属性（如startOffset，duration等），可以被包含在AnimationSet当中的Animation集成
+	例：一个AnimationSet中有两个Animation，效果叠加
+
+【Interpolator的具体使用方法】
+    Interpolator定义了动画变化的速率，在Animations框架当中定义了一下几种Interpolator
+	AccelerateDecelerateInterpolator：在动画开始与结束的地方速率改变比较慢，在中间的时候速率快。
+	AccelerateInterpolator：在动画开始的地方速率改变比较慢，然后开始加速
+	CycleInterpolator：动画循环播放特定的次数，速率改变沿着正弦曲线
+	DecelerateInterpolator：在动画开始的地方速率改变比较慢，然后开始减速
+	LinearInterpolator：动画以均匀的速率改变
+
+五、Frame Animation具体实现
+Frame Animation是顺序播放事先做好的图像，跟电影类似。不同于animation package， Android SDK提供了另外一个类AnimationDrawable来定义、使用Frame Animation。
+Frame Animation可以在XML Resource定义（还是存放到res\anim文件夹下），也可以使用AnimationDrawable中的API定义。由于Tween Animation与Frame Animation有着很大的不同，因此XML定义的格式也完全不一样，其格式是：首先是animation-list根节点，animation-list根节点中包含多个item子节点，每个item节点定义一帧动画，当前帧的drawable资源和当前帧持续的时间。下面对节点的元素加以说明
+
+XML属性	说明
+drawable	当前帧引用的drawable资源
+duration	当前帧显示的时间（毫秒为单位）
+oneshot		如果为true，表示动画只播放一次停止在最后一帧上，如果设置为false表示动画循环播放。
+variablePadding	If true, allows the drawable’s padding to change based on the current state that is selected.
+visible		规定drawable的初始可见性，默认为flase；
+下面就给个具体的XML例子，来定义一帧一帧的动画：
+<animation-list xmlns:android="http://schemas.android.com/apk/res/android"
+    android:oneshot="true">
+    <item android:drawable="@drawable/rocket_thrust1" android:duration="200" />
+    <item android:drawable="@drawable/rocket_thrust2" android:duration="200" />
+    <item android:drawable="@drawable/rocket_thrust3" android:duration="200" />
+</animation-list>
+activity调用：
+AnimationDrawable rocketAnimation;
+iView = (ImageView)findViewById(R.id.image);
+iView.setBackgroundResource(R.anim.anim_list);
+rocketAnimation = (AnimationDrawable)iView.getBackground();
+rocketAnimation.stop();
+rocketAnimation.start();
+我在实验中遇到两点问题：
+
+要在代码中调用Imageview的setBackgroundResource方法，如果直接在XML布局文件中设置其src属性当触发动画时会FC。
+在动画start()之前要先stop()，不然在第一次动画之后会停在最后一帧，这样动画就只会触发一次。
+最后一点是SDK中提到的，不要在onCreate中调用start，因为AnimationDrawable还没有完全跟Window相关联，如果想要界面显示时就开始动画的话，可以在onWindowFoucsChanged()中调用start()。

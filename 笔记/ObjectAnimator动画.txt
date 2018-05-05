@@ -1,0 +1,182 @@
+setDuration();			//设置动画运行的时长
+start();			//启动动画
+addUpdateListener();		//动画监听器
+view.getTranslationX();  	//当前View的translationX的位置
+
+"alpha"                         //透明度
+"rotation"			//旋转
+"translationX"			//X轴移动
+"scaleY"			//Y轴缩放	
+
+//初始值和结束值之间的动画过渡
+ValueAnimator anim = ValueAnimator.ofFloat(0f, 1f);  
+ValueAnimator anim = ValueAnimator.ofInt(0, 5, 3, 10);  
+
+//任意对象的任意属性进行动画操作
+ObjectAnimator animator = ObjectAnimator.ofFloat(textview, "alpha", 1f, 0f, 1f);
+animator.setDuration(3000);
+animator.start();
+
+//组合动画
+after(Animator anim)   		将现有动画插入到传入的动画之后执行
+after(long delay)   		将现有动画延迟指定毫秒后执行
+before(Animator anim)   	将现有动画插入到传入的动画之前执行
+with(Animator anim)   		将现有动画和传入的动画同时执行
+
+animator.setDuration(2000);//动画时间
+animator.setInterpolator(new BounceInterpolator());//动画插值
+animator.setRepeatCount(-1);//设置动画重复次数
+animator.setRepeatMode(ValueAnimator.RESTART);//动画重复模式
+animator.setStartDelay(1000);//动画延时执行
+animator.start();//启动动画
+
+public static ViewPropertyAnimator animate(View view)
+指定需要动画的View，返回一个ViewPropertyAnimator对象
+
+public abstract ViewPropertyAnimator setDuration(long duration);
+设置持续时间
+
+public abstract long getDuration();
+得到持续时间
+
+public abstract long getStartDelay();
+得到开始延迟
+
+public abstract ViewPropertyAnimator setStartDelay(long startDelay);
+设置开始延迟
+
+public abstract ViewPropertyAnimator setInterpolator(/*Time*/Interpolator interpolator);
+设置插值器
+
+public abstract ViewPropertyAnimator setListener(Animator.AnimatorListener listener);
+设置监听器
+
+public abstract void start();
+开始动画
+
+public abstract void cancel();
+取消动画
+
+public abstract ViewPropertyAnimator x(float value);
+对属性x执行动画
+
+public abstract ViewPropertyAnimator xBy(float value);
+对属性x执行动画
+
+public abstract ViewPropertyAnimator y(float value);
+对属性y执行动画
+
+public abstract ViewPropertyAnimator yBy(float value);
+对属性y执行动画
+
+public abstract ViewPropertyAnimator rotation(float value);
+对属性rotation执行动画
+
+public abstract ViewPropertyAnimator rotationBy(float value);
+对属性rotation执行动画
+
+public abstract ViewPropertyAnimator rotationX(float value);
+对属性rotationX执行动画
+
+public abstract ViewPropertyAnimator rotationXBy(float value);
+对属性rotationX执行动画
+
+public abstract ViewPropertyAnimator rotationY(float value);
+对属性rotationY执行动画
+
+public abstract ViewPropertyAnimator rotationYBy(float value);
+对属性rotationY执行动画
+
+public abstract ViewPropertyAnimator translationX(float value);
+对属性translationX执行动画
+
+public abstract ViewPropertyAnimator translationXBy(float value);
+对属性translationX执行动画
+
+public abstract ViewPropertyAnimator translationY(float value);
+对属性translationY执行动画
+
+public abstract ViewPropertyAnimator translationYBy(float value);
+对属性translationY执行动画
+
+public abstract ViewPropertyAnimator scaleX(float value);
+对属性scaleX执行动画
+
+public abstract ViewPropertyAnimator scaleXBy(float value);
+对属性scaleX执行动画
+
+public abstract ViewPropertyAnimator scaleY(float value);
+对属性scaleY执行动画
+
+public abstract ViewPropertyAnimator scaleYBy(float value);
+对属性scaleY执行动画
+
+public abstract ViewPropertyAnimator alpha(float value);
+对属性alpha执行动画
+
+public abstract ViewPropertyAnimator alphaBy(float value);
+对属性alpha执行动画
+
+例子：
+ObjectAnimator moveIn = ObjectAnimator.ofFloat(textview, "translationX", -500f, 0f);  
+ObjectAnimator rotate = ObjectAnimator.ofFloat(textview, "rotation", 0f, 360f);  
+ObjectAnimator fadeInOut = ObjectAnimator.ofFloat(textview, "alpha", 1f, 0f, 1f);  
+AnimatorSet animSet = new AnimatorSet();  
+animSet.play(rotate).with(fadeInOut).after(moveIn);  
+animSet.setDuration(5000);  
+animSet.start();
+
+//使用XML编写动画 
+<animator>  			对应代码中的ValueAnimator
+<objectAnimator>  		对应代码中的ObjectAnimator
+<set>  				对应代码中的AnimatorSet 
+例子：
+//从0到100平滑过渡的动画
+<animator xmlns:android="http://schemas.android.com/apk/res/android"  
+    android:valueFrom="0"  
+    android:valueTo="100"  
+    android:valueType="intType"/> 
+//其他
+<set xmlns:android="http://schemas.android.com/apk/res/android"  
+    android:ordering="sequentially" >  
+  
+    <objectAnimator  
+        android:duration="2000"  
+        android:propertyName="translationX"  
+        android:valueFrom="-500"  
+        android:valueTo="0"  
+        android:valueType="floatType" >  
+    </objectAnimator>  
+  
+    <set android:ordering="together" >  
+        <objectAnimator  
+            android:duration="3000"  
+            android:propertyName="rotation"  
+            android:valueFrom="0"  
+            android:valueTo="360"  
+            android:valueType="floatType" >  
+        </objectAnimator>  
+  
+        <set android:ordering="sequentially" >  
+            <objectAnimator  
+                android:duration="1500"  
+                android:propertyName="alpha"  
+                android:valueFrom="1"  
+                android:valueTo="0"  
+                android:valueType="floatType" >  
+            </objectAnimator>  
+            <objectAnimator  
+                android:duration="1500"  
+                android:propertyName="alpha"  
+                android:valueFrom="0"  
+                android:valueTo="1"  
+                android:valueType="floatType" >  
+            </objectAnimator>  
+        </set>  
+    </set>  
+  
+</set>   
+//加载xml动画
+Animator animator = AnimatorInflater.loadAnimator(context, R.animator.anim_file);  
+animator.setTarget(view);  
+animator.start();  

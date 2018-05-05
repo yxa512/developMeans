@@ -1,0 +1,75 @@
+android 动画属性详解
+
+android中的动画属性主要分为四种，分别是alpha、scale、translate、rotate。我们现在来详细了解一下各个类型的意思，然后根据项目的需求要定义自己的动画。
+alpha         透明度渐变的动画效果
+scale         尺寸收缩渐变的动画效果
+translate    画面转换位置的动画效果
+rotate         画面转移旋转动画效果
+
+加载动画我们可以通过两种方式，一种是xml布局的方式，另一种就是纯的java代码方式。两种方式各有优势，根据需要可以自己选择。首先我们来看下xml的方式定义动画属性，需要在res目录下新建一个文件夹anim，具体的路径为res/anim，里面新建一个img_anim.xml文件。
+
+<?xml version="1.0" encoding="utf-8"?>  
+<set>  
+  
+    <alpha />  
+  
+    <rotate />  
+  
+    <scale />  
+  
+    <translate />  
+  
+</set>
+
+接下来我们分别了解其中的每个属性的内容：
+
+【Alpha 透明度渐变的动画效果】
+fromAlpha   动画开始时的透明度， 0.0~1.0之间的float类型的数字，0.0代表完全透明，1.0代表不透明
+toAlpha       动画结束时的透明度，同上
+interpolator 动画的显示速度，可以有加速、匀速等状态。
+
+【Scale 尺寸收缩渐变的动画效果】
+fromYScale 代表起点Y方向上相对于自身的缩放比例，0.5缩小一半，1.0无变化，2.0放大一倍
+fromXScale 代表起点X方向上相对于自身的缩放比例。
+toXScale、toYScale与上面相对，代表结束时的x、y方向上的缩放比例
+pivotX，pivotY代表缩放的中心点x、y位置，
+注：
+ 	1)当值为"50"，表示使用绝对位置定位
+        2)当值为"50%"，表示使用相对于控件本身定位
+        3)当值为"50%p"，表示使用相对于控件的父控件定位
+
+【Rotate 画面转移旋转动画效果】
+fromDegrees 从初始的角度开始旋转，单位为“ ° ”
+toDegrees     结束时的度数
+pivotX，pivotY代表缩放的中心点x、y位置，
+interpolator 动画的显示速度，可以有加速、匀速等状态。
+
+【Translate  画面转换位置的动画效果】
+fromXDelta 代表起始方向上x的位置
+fromYDelta 代表起始方向上y的位置
+toXDelta     代表结束时方向上x的位置
+toYDelta     代表结束时方向上y的位置
+
+【公共的属性】
+repeatCount 动画重复的次数，-1代表无线循环
+fillAfter 如果设置为true的话动画结束后就停止，保持动画结束时的状态。
+duration 动画持续的时间
+
+【activity调用】
+ImageView iView = (ImageView)findViewById(R.id.image);
+Animation animation = AnimationUtils.loadAnimation(this, R.anim.image_anim);
+iView.startAnimation(animation);
+
+【AnimationSet的具体使用方法】
+   1.AnimationSet是Animation的子类；
+   2.一个AnimationSet包含了一系列的Animation； 
+   3.针对AnimationSet设置一些Animation的常见属性（如startOffset，duration等），可以被包含在AnimationSet当中的Animation集成
+	例：一个AnimationSet中有两个Animation，效果叠加
+
+【Interpolator的具体使用方法】
+    Interpolator定义了动画变化的速率，在Animations框架当中定义了一下几种Interpolator
+	AccelerateDecelerateInterpolator：在动画开始与结束的地方速率改变比较慢，在中间的时候速率快。
+	AccelerateInterpolator：在动画开始的地方速率改变比较慢，然后开始加速
+	CycleInterpolator：动画循环播放特定的次数，速率改变沿着正弦曲线
+	DecelerateInterpolator：在动画开始的地方速率改变比较慢，然后开始减速
+	LinearInterpolator：动画以均匀的速率改变

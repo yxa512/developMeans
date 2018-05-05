@@ -1,0 +1,50 @@
+﻿package com.getcolordemo;
+
+import android.app.Activity;
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.View.OnTouchListener;
+import android.widget.ImageView;
+
+public class MainActivity extends Activity {
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_main);
+
+		final View view = findViewById(R.id.txt_test);
+		final ImageView imageView = (ImageView) findViewById(R.id.imgview_main);
+		imageView.setDrawingCacheEnabled(true);
+
+		imageView.setOnTouchListener(new OnTouchListener() {
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				Bitmap bm = imageView.getDrawingCache();
+
+				int width = bm.getWidth();
+				int height = bm.getHeight();
+				int x = (int) event.getX();
+				int y = (int) event.getY();
+
+				if ((x > 0 && x < width) && (y > 0 && y < height)) {
+					int color = bm.getPixel(x, y);
+
+					// 将RGB色彩转换为HSV色彩。H:0-360,S:0-1,V：0-1
+					float[] hsv = new float[3];
+					Color.RGBToHSV(Color.red(color), Color.green(color),
+							Color.blue(color), hsv);
+					Log.i("test2", "H:" + hsv[0] + " S:" + hsv[1] + " V:"
+							+ hsv[2]);
+
+					view.setBackgroundColor(color);
+				}
+				return true;
+			}
+		});
+	}
+}

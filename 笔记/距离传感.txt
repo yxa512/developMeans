@@ -1,0 +1,71 @@
+public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.pic_move);
+		
+		myProxSensor = new MyProxSensor();
+		myProxSensor.start();
+	}
+
+	@Override
+	protected void onStop() {
+		// TODO Auto-generated method stub
+		super.onStop();
+		if(myProxSensor != null){
+			myProxSensor.stop();
+		}
+	}
+	
+	//监听器：
+	class MyProxSensor implements SensorEventListener {
+
+	        private final SensorManager mSensorManager;
+	        private Sensor mSensor;
+	        private float mMaxRange;
+
+	        MyProxSensor() {
+	            //mSensorManager=.getSensorManager();
+	            mSensorManager = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
+	            Log.i("yxa", "sensor create");
+	        }
+
+	        void start() {
+	            if (mSensorManager!=null && mSensor==null) {
+	                if ((mSensor=mSensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY))!=null) {
+	                    mMaxRange=mSensor.getMaximumRange();
+	                    mSensorManager.registerListener(this, mSensor,SensorManager.SENSOR_DELAY_UI);
+	                }
+	            }
+	        }
+
+	        void stop() {
+	            if (mSensorManager!=null&&mSensor!=null) {
+	                mSensorManager.unregisterListener(this);
+	                mSensor=null;
+	            }
+	        }
+
+	        @Override
+	        public void onAccuracyChanged(Sensor sensor, int accuracy) {
+	        }
+
+	        @Override
+	        public void onSensorChanged(SensorEvent event) {
+	            try { // Keep it until we get a phone supporting this feature
+
+	                if (event.values!=null&&event.values.length>0) {
+	                    if (event.values[0]<this.mMaxRange) {
+	                        Log.d("yxa", "reenableKeyguard()");
+	                        ll_back.setVisibility(View.VISIBLE);
+	                        //reenablekeyguard();在这里把屏幕变黑
+	                    } else {
+	                        Log.d("yxa", "disableKeyguard()");
+	                       ll_back.setVisibility(View.GONE);
+	                       //disableKeyguard();取消原来的黑屏
+	                    }
+	                }
+	            } catch (Exception e) {
+	                e.printStackTrace();
+	            }
+	        }
+	    }
+}

@@ -1,0 +1,133 @@
+下面讲解以下在使用listview时最常见的几个问题。
+1.如何改变item的背景色和按下颜色
+　　listview默认情况下，item的背景色是黑色，在用户点击时是黄色的。如果需要修改为自定义的背景颜色，一般情况下有三种方法：
+　　1）设置listSelector
+　　2）在布局文件中设置item的background
+　　3）在adapter的getview中设置
+　　这三种方法都能达到改变item默认的背景色和按下颜色，下面来分别讲解，但是在这之前需要先写好selector.xml文件;
+复制代码 代码如下:
+<?xml version="1.0" encoding="utf-8"?>
+<selector
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_pressed="true" android:drawable="@color/light_blue"></item>
+    <item android:state_pressed="false" android:drawable="@color/sgray"></item>
+</selector>
+
+在改变button或者listview的item默认背景色，就可以用到selector。drawable可以设置为色彩资源，也可以设置为图片资源。
+1）设置listview的listSelector
+复制代码 代码如下:
+
+<ListView
+   android:id="@+id/history_list"
+   android:layout_width="fill_parent"
+   android:layout_height="wrap_content"
+   android:divider="#565C5D"
+   android:dividerHeight="3dp"
+   android:listSelector="@drawable/selector"
+   android:cacheColorHint="@android:color/transparent">
+</ListView>
+
+2）在listitem的布局文件中设置background属性，下面是listitem的布局文件
+复制代码 代码如下:
+
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="fill_parent"
+  android:layout_height="fill_parent"
+  android:background="@drawable/selector">
+    <TextView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="历史记录"
+          android:textColor="#ffffff"
+          android:textSize="20sp"
+          android:layout_centerInParent="true">
+     </TextView>
+</RelativeLayout>
+
+3）在adapter的getView方法中设置
+复制代码 代码如下:
+
+ if(convertView ==null)
+ {
+     convertView = LayoutInflater.from(context).inflate(R.layout.listitem, null);
+ }
+ convertView.setBackgroundResource(R.drawable.selector);
+ 
+
+　　上述方法都能达到同样的效果，就是改变item默认的背景色和点击时的背景颜色，第三种方法最灵活，如果listview的奇数行和偶数行需要设置为不同的selector，只能用第三种方法。
+2.包含button，checkbox等控件时点击无响应问题。
+　　如果listitem里面包括button或者checkbox等控件，默认情况下listitem会失去焦点，导致无法响应item的事件，最常用的解决办法是在listitem的布局文件中设置descendantFocusability属性。
+复制代码 代码如下:
+
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="wrap_content"
+  android:layout_height="wrap_content"
+  android:paddingTop="10dp"
+  android:paddingBottom="10dp"
+  android:paddingLeft="5dp"
+  android:paddingRight="5dp"
+  android:descendantFocusability="blocksDescendants">
+
+  <CheckBox
+   android:id="@+id/history_item_checkbt"
+   android:layout_height="30dp"
+   android:layout_width="wrap_content"
+   android:layout_centerVertical="true"
+   android:layout_alignParentLeft="true"
+   android:checked="false"
+   >
+  </CheckBox>
+
+  <ImageView
+   android:id="@+id/history_item_image"
+   android:layout_width="wrap_content"
+   android:layout_height="wrap_content"
+   android:layout_centerVertical="true"
+   android:layout_toRightOf="@id/history_item_checkbt"
+   android:background="@drawable/item_icon">
+  </ImageView>
+
+  
+  <Button
+   android:id="@+id/history_item_edit_bt"
+   android:layout_alignParentRight="true"
+   android:layout_width="wrap_content"
+   android:layout_height="wrap_content"
+   android:layout_centerVertical="true"
+   android:text="编辑"
+   android:textColor="#ffffff"
+   android:textSize="14sp"
+   android:background="@drawable/button_bg">
+  </Button>
+
+  <TextView
+   android:id="@+id/history_item_time_tv"
+   android:layout_width="wrap_content"
+   android:layout_height="wrap_content"
+   android:layout_centerVertical="true"
+   android:textColor="#565C5D"
+   android:textSize="14sp"
+   android:text="10-01 10:20"
+   android:layout_marginRight="5dp"
+   android:layout_toLeftOf="@id/history_item_edit_bt">
+  </TextView>
+
+  <TextView
+   android:id="@+id/history_item_title_tv"
+   android:layout_height="wrap_content"
+   android:layout_width="fill_parent"
+   android:layout_centerVertical="true"
+   android:textColor="#565C5D"
+   android:textSize="14sp"
+   android:text="xxxxxxxxXXXXXXXXXXXXXXXX"
+   android:ellipsize="end"
+   android:maxLines="1"
+   android:layout_toRightOf="@id/history_item_image"
+   android:layout_toLeftOf="@id/history_item_time_tv"
+   android:layout_marginLeft="3dp">
+  </TextView>
+</RelativeLayout>

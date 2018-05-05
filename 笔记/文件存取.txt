@@ -1,0 +1,184 @@
+﻿<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+public final class StorageHelper {
+	private Context context;
+
+	private static final String ROOT_DIR = "Storage_Demo";
+
+	public StorageHelper(Context context) {
+		this.context = context;
+	}
+
+	/**
+	 * 将文本信息写入文件
+	 * 
+	 * @param contentoo
+	 * @param fileName
+	 * @throws IOException
+	 */
+	public void saveTextFile(String content, String fileName)
+			throws IOException {
+		if (!this.isExternalStorageWritable()) {
+			Toast.makeText(this.context, "当前外部存储区不可写入", Toast.LENGTH_SHORT)
+					.show();
+			return;
+		}
+
+		File externalDir = new File(Environment.getExternalStorageDirectory(),
+				ROOT_DIR);
+		if (!externalDir.exists()) {
+			externalDir.mkdirs();
+		}
+
+		File file = new File(externalDir, fileName);
+
+		if (!file.exists()) {
+			file.createNewFile();
+		}
+
+		FileWriter writer = new FileWriter(file, true);
+		writer.write(content);
+		writer.close();
+	}
+
+	/**
+	 * 从文本文件中读取内容
+	 * 
+	 * @param fileName
+	 * @return
+	 * @throws IOException
+	 */
+	public String readTextFile(String fileName) throws IOException {
+		if (!this.isExternalStorageReadable()) {
+			Toast.makeText(this.context, "当前外部存储区不可读", Toast.LENGTH_SHORT)
+					.show();
+			return "";
+		}
+
+		File externalDir = new File(Environment.getExternalStorageDirectory(),
+				ROOT_DIR);
+		if (!externalDir.exists()) {
+			externalDir.mkdirs();
+		}
+
+		File file = new File(externalDir, fileName);
+
+		InputStream in = new FileInputStream(file);
+		byte[] data = new byte[in.available()];
+		in.read(data);
+		in.close();
+		return new String(data, "utf-8");
+	}
+
+	/**
+	 * 根据图片路径获得图片Bitmap对象
+	 * 
+	 * @param filePath
+	 * @return
+	 * @throws IOException
+	 */
+	public Bitmap getImageBitmap(String filePath) throws IOException {
+		if (!this.isExternalStorageReadable()) {
+			return null;
+		}
+		
+		File fileDir = Environment.getExternalStorageDirectory();
+		File file = new File(fileDir, filePath);
+		InputStream in = new FileInputStream(file);
+		Bitmap bm = BitmapFactory.decodeStream(in);
+		return bm;
+	}
+	
+	/**
+	 * 把图片Bitmap对象存放到指定文件
+	 * 
+	 * @param bitmap
+	 * @param filePath
+	 * @throws IOException
+	 */
+	public void saveImage(Bitmap bitmap, String filePath) throws IOException {
+		if (!this.isExternalStorageWritable()) {
+			return;
+		}
+		
+                方法一：
+		File fileDir = Environment.getExternalStorageDirectory();
+		File file = new File(fileDir, filePath);
+		OutputStream out = new FileOutputStream(file);
+
+		方法二：
+	        File rootFolder = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+File.separator+"DCIM"+File.separator);
+		final String fileName = rootFolder.getAbsoluteFile() + File.separator + getFileNameWithTime();
+		FileOutputStream fos = null;
+		fos = new FileOutputStream(fileName, false);
+		
+		Boolean isOk = bitmap.compress(Bitmap.CompressFormat.PNG, 0, out);
+		if (isOk) {
+			Log.i("saveImage", "保存图片成功");
+		}
+	}
+
+	/**
+	 * 判断外存储区是否可读
+	 * 
+	 * @return
+	 */
+	private boolean isExternalStorageReadable() {
+		String state = Environment.getExternalStorageState();
+		if (Environment.MEDIA_MOUNTED.equals(state)
+				|| Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * 判断外存储区是否可写入
+	 * 
+	 * @return
+	 */
+	private boolean isExternalStorageWritable() {
+		String state = Environment.getExternalStorageState();
+		if (Environment.MEDIA_MOUNTED.equals(state)) {
+			return true;
+		}
+		return false;
+	}
+}
+
+
+
+	// filename: such as,M20101023_181010.jpg
+		private static String getFileNameWithTime() {
+
+			Calendar c = Calendar.getInstance();
+			int mYear = c.get(Calendar.YEAR);
+			int mMonth = c.get(Calendar.MONTH) + 1;
+			int mDay = c.get(Calendar.DAY_OF_MONTH);
+			int mHour = c.get(Calendar.HOUR_OF_DAY);
+			int mMinute = c.get(Calendar.MINUTE);
+			int mSec = c.get(Calendar.SECOND);
+
+			StringBuffer sb = new StringBuffer();
+			sb.append("IMG_");
+			sb.append(mYear);
+			if (mMonth < 10)
+				sb.append('0');
+			sb.append(mMonth);
+			if (mDay < 10)
+				sb.append('0');
+			sb.append(mDay);
+			sb.append('_');
+			if (mHour < 10)
+				sb.append('0');
+			sb.append(mHour);
+			if (mMinute < 10)
+				sb.append('0');
+			sb.append(mMinute);
+			if (mSec < 10)
+				sb.append('0');
+			sb.append(mSec);
+			sb.append(".jpg");
+
+			return sb.toString();
+		}

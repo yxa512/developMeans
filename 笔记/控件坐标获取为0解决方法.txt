@@ -1,0 +1,10 @@
+view.post(new Runnable() {
+			
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				x = view.getX();
+				y = view.getY();
+				h = view.getHeight();
+			}
+		});
