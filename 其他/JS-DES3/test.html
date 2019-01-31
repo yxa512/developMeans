@@ -1,0 +1,81 @@
+<html lang="en">
+<head>
+  <title>www.jb51.net BASE64编码</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <script type="text/javascript" src="Base64.js"></script>
+  <script type="text/javascript" src="DES3.js"></script>
+</head>
+
+<script type="text/javascript">
+
+var key = "ztesoftmobileframework..";
+var encryptReg = new RegExp("\\+","g"); //创建正则RegExp对象  
+var decryptReg = new RegExp("@","g");
+var mBody;
+
+//加密
+function encrypt(){
+	//{"body":{"user_name":"Admin","pwd":"987","login_type":"0","device_type":"0"}}
+	//{"body":"DOCk5WDqCgvkdW1kDtamM6sLzOxzj4Kx0nzyz3Nk2oiSC0XsRm@d1wvhC2nvOCxmR0eD8/PIZKF/GlY7@IX7cEl/94CgCG3mEvi2kcON7yI="}
+	var str = document.getElementById("content").value;
+	var et = DES3.encrypt(key,str).replace(encryptReg, "@");
+	mBody = "{\"body\":\""+et+"\"}";
+	document.getElementById("result").innerHTML="encrypt:"+et+"</br>"
+	+"request:"+mBody;
+}
+
+//解密
+function decrypt(){
+	//"result" : "V6MDQv78HVnO4oQ11exhz8i21MItjJjf5z6DmaB1/JKYYCz0Twnw/A=="  返回结果
+	//{"result":"1008","msg":"密码错误"}
+	var str = document.getElementById("content").value;
+	var dt = DES3.decrypt(key,str.replace(decryptReg, "+"));
+	document.getElementById("result").innerHTML="decrypt:"+dt;
+}
+
+//请求
+function request(){
+
+
+	let myHeaders = new Headers({
+		'Access-Control-Allow-Origin': '*',
+		'isH5':'true'
+	});
+	//http://60.10.25.162:8888/liantong_tower/mobapp/logon.spr?method=login
+	fetch('http://60.10.25.246:8888/liantong_tower/mobapp/datastatistics.spr?method=queryDeviceCount',{
+		
+		method: 'POST',
+		headers: myHeaders,
+        mode:'cors',
+		body: mBody,
+		
+	}).then((response) => {  
+	  if (response.ok) {  
+		  return response.json();  
+	  }  
+	}).then((json) => {  
+	  	console.log(JSON.stringify(json));
+		document.getElementById("result").innerHTML="response:"+JSON.stringify(json);
+	}).catch((error) => {  
+	  console.error(error);  
+	});  
+
+	
+}
+
+</script>
+
+<body>
+
+
+<input id="content"/></br>
+
+<button type="button" onclick="encrypt()">encrypt</button>
+<button type="button" onclick="decrypt()">decrypt</button>
+<button type="button" onclick="request()">request</button>
+
+<p id="result"></p>
+
+</body>
+
+<html>

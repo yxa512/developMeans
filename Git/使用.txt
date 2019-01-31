@@ -17,3 +17,6 @@ git clone url
 
 推送远程分支
 git branch --set-upstream develop_v1.3.3 origin/develop_v1.3.3
+
+查看项目地址
+git remote -v
