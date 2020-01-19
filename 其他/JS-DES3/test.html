@@ -41,13 +41,49 @@ function request(){
 		'Access-Control-Allow-Origin': '*',
 		'isH5':'true'
 	});
-	//http://60.10.25.162:8888/liantong_tower/mobapp/logon.spr?method=login
-	fetch('http://60.10.25.246:8888/liantong_tower/mobapp/datastatistics.spr?method=queryDeviceCount',{
+	fetch('http://172.21.34.147:8888/liantong_tower/mobapp/datastatistics.spr?method=queryDeviceCount',{
 		
 		method: 'POST',
 		headers: myHeaders,
         mode:'cors',
 		body: mBody,
+
+		
+	}).then((response) => {  
+	  if (response.ok) {  
+		  return response.json();  
+	  }  
+	}).then((json) => {  
+	  	console.log(JSON.stringify(json));
+		document.getElementById("result").innerHTML="response:"+JSON.stringify(json);
+	}).catch((error) => {  
+	  console.error(error);  
+	});  
+
+	
+}
+
+//上传文件
+function upload(){
+
+
+	let myHeaders = new Headers({
+		'Access-Control-Allow-Origin': '*',
+		'isH5':'true',
+	});
+
+	var fileField = document.querySelector("input[type='file']");
+	var formData = new FormData();
+    formData.append('param', 'content');
+	formData.append('file', fileField.files[0]);
+	console.log(formData.get('file'))
+	
+	fetch('http://172.21.34.147:8888/liantong_tower/mobapp/file.spj?method=uploadFileToFTP',{
+		
+		method: 'POST',
+		headers: myHeaders,
+        mode:'cors',
+		body: formData,
 		
 	}).then((response) => {  
 	  if (response.ok) {  
@@ -69,10 +105,12 @@ function request(){
 
 
 <input id="content"/></br>
+<input type="file" />
 
 <button type="button" onclick="encrypt()">encrypt</button>
 <button type="button" onclick="decrypt()">decrypt</button>
 <button type="button" onclick="request()">request</button>
+<button type="button" onclick="upload()">upload</button>
 
 <p id="result"></p>
 

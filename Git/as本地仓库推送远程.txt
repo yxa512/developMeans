@@ -1,0 +1,10 @@
+Git -> Repository --> fetch
+获取到远程master分支
+
+git branch --set-upstream-to origin/master
+完成绑定
+
+git pull --allow-unrelated-histories
+拉取不相关的历史记录，把README拉取过来了
+
+https://blog.csdn.net/TTAndroid/article/details/81352626
